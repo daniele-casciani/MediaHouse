@@ -1,0 +1,11 @@
+services:
+  server:
+    build: ./nodeserver
+    env_file:
+      - ./nodeserver/.env
+    ports:
+      - "5005:3000"
+    volumes:
+      - ./nodeserver/src:/app/src
+      - ./nodeserver/scripts:/app/scripts
+      - ./nodeserver/logs/stdout.log:/app/logs/stdout.log
