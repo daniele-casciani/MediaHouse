@@ -1,8 +1,7 @@
 // src/App.tsx
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import { createZitadelAuth, ZitadelConfig } from "@zitadel/react";
+import { createZitadelAuth, ZitadelConfig, } from "@zitadel/react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Login from "./components/Login";
@@ -10,11 +9,16 @@ import Callback from "./components/Callback";
 
 function App() {
   const config: ZitadelConfig = {
-    authority: "http://dani.vm.infra.genogra.com:8082/",
-    client_id: "328256500474642435",
+    authority: process.env.REACT_APP_AUTH_ISSUER!, 
+    client_id: process.env.REACT_APP_AUTH_CLIENT_ID!,  
+    redirect_uri: process.env.REACT_APP_AUTH_REDIRECT_URI!,
+    post_logout_redirect_uri: process.env.REACT_APP_AUTH_LOGOUT_REDIRECT_URI!,
+    scope: "openid profile email",
+    response_type: "code",
   };
 
   const zitadel = createZitadelAuth(config);
+  console.log("Zitadel Auth Config:", config);
 
   function login() {
     zitadel.authorize();
@@ -39,7 +43,6 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>Welcome to MediaHouse React</p>
 
         <BrowserRouter>
