@@ -49,7 +49,7 @@ const Callback = ({
           setAuth(false);
         });
     }
-  }, [authenticated, userManager, setAuth]);
+  }, [authenticated, userManager, setAuth, userInfo]);
   if (authenticated === true && userInfo) {
     return (
       <div className="user">

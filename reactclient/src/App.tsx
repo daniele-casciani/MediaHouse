@@ -11,7 +11,7 @@ import Callback from "./components/Callback";
 function App() {
   const config: ZitadelConfig = {
     authority: "http://dani.vm.infra.genogra.com:8082/",
-    client_id: "328116644427661315",
+    client_id: "328256500474642435",
   };
 
   const zitadel = createZitadelAuth(config);
@@ -40,7 +40,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Welcome to ZITADEL React</p>
+        <p>Welcome to MediaHouse React</p>
 
         <BrowserRouter>
           <Routes>
