@@ -17,8 +17,40 @@ const Callback = ({
   handleLogout,
 }: Props) => {
   const [userInfo, setUserInfo] = useState<User | null>(null);
-
+  console.log("User (JSON):", JSON.stringify(userInfo?.profile, null, 2));
+  
   useEffect(() => {
+  const loadUser = async () => {
+    try {
+        const user = await userManager.getUser();
+
+        if (user && user.access_token) {
+          // 🔁 Recupera dati completi dal userinfo endpoint
+          const res = await fetch(`${userManager.settings.authority}/oidc/v1/userinfo`, {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`,
+            },
+          });
+
+          if (!res.ok) throw new Error('Userinfo fetch failed');
+
+          const profile = await res.json();
+
+          console.log('✅ Full profile:', profile);
+
+          // ✅ Sovrascrive il profilo dell'oggetto utente
+          user.profile = profile;
+
+          setUserInfo(user);
+          setAuth(true);
+        } else {
+          setAuth(false);
+        }
+    } catch (error) {
+      console.error('❌ Error loading user:', error);
+      setAuth(false);
+    }
+    };
     if (authenticated === null) {
       userManager
         .signinRedirectCallback()
@@ -35,21 +67,10 @@ const Callback = ({
         });
     }
     if (authenticated === true && userInfo === null) {
-      userManager
-        .getUser()
-        .then((user) => {
-          if (user) {
-            setAuth(true);
-            setUserInfo(user);
-          } else {
-            setAuth(false);
-          }
-        })
-        .catch((error: any) => {
-          setAuth(false);
-        });
+      loadUser();
     }
   }, [authenticated, userManager, setAuth, userInfo]);
+
   if (authenticated === true && userInfo) {
     return (
       <div className="user">

@@ -6,5 +6,5 @@
 [authorizeAccess] Authorizing access for endpoint: edit_article
 [authorizeAccess] Authorizing access for endpoint: review_article
 [authorizeAccess] Authorizing access for endpoint: publish_article
-[dotenv@17.1.0] injecting env (0) from .env (tip: 🔐 encrypt with dotenvx: https://dotenvx.com)
+[dotenv@17.1.0] injecting env (0) from .env (tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild)
 Server running on port 3000
