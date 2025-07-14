@@ -12,7 +12,8 @@ const settings = {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     stateStore: new WebStorageStateStore({ store: window.sessionStorage }),
     automaticSilentRenew: true,
-    silent_redirect_uri: "http://localhost:5006/silent-renew.html"
+    silent_redirect_uri: process.env.REACT_APP_AUTH_SILENT_REDIRECT_URI || "http://localhost:5006/silent-renew.html",
+    filterProtocolClaims: true,
 };
 
 const userManager = new UserManager(settings);
