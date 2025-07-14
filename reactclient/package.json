@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "jwt-decode": "^4.0.0",
     "oidc-client-ts": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -10,6 +11,7 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
+    "@types/jwt-decode": "^2.2.1",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "5.3.3",

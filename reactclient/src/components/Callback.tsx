@@ -12,7 +12,7 @@ type Props = {
 const fetchUserInfo = async (accessToken: string, authority: string) => {
     const res = await fetch(`${authority}/oidc/v1/userinfo`, {
         headers: {
-        Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     });
     if (!res.ok) throw new Error('Userinfo fetch failed');
