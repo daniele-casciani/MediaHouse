@@ -10,6 +10,9 @@ const settings = {
     response_type: 'code',
     scope: 'openid profile email phone address offline_access',
     userStore: new WebStorageStateStore({ store: window.localStorage }),
+    stateStore: new WebStorageStateStore({ store: window.sessionStorage }),
+    automaticSilentRenew: true,
+    silent_redirect_uri: "http://localhost:5006/silent-renew.html"
 };
 
 const userManager = new UserManager(settings);

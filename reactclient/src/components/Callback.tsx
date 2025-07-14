@@ -68,6 +68,19 @@ const Callback = ({
             )}
             </p>
             <button onClick={handleLogout}>Log out</button>
+            <button onClick={() => {
+                userManager.signinSilent()
+                    .then(user => {
+                        console.log("Silent renew successful:", user);
+                        setUserInfo(user);
+                    })
+                    .catch(err => {
+                        console.error("Silent renew failed:", err);
+                    });
+                }}>
+                Test Silent Renew
+            </button>
+
         </div>
         );
     }
