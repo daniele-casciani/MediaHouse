@@ -32,14 +32,15 @@ const Callback = ({
         const handleCallbackAndLoadUser = async () => {
         try {
             // 1. Gestisce redirect callback
-            const user = await userManager.signinRedirectCallback();
+            const user = await userManager.signinCallback();
+            console.log("[Callback] User signed in:", user);
             setAuth(true);
 
             // 2. Recupera info utente dettagliate
-            const profile = await fetchUserInfo(user.access_token, userManager.settings.authority);
-            user.profile = profile;
+            const profile = await fetchUserInfo(user!.access_token, userManager.settings.authority);
+            user!.profile = profile;
 
-            setUserInfo(user);
+            setUserInfo(user!);
         } catch (error) {
             console.error("Callback or userinfo error:", error);
             setAuth(false);

@@ -5,6 +5,7 @@ import userManager from "./auth/oidcClient";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Login from "./components/Login";
+import LogoutCallback from "./components/LogoutCallback";
 import Callback from "./components/Callback";
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
 	return (
 		<div className="App">
 			<header className="App-header">
-				<p>Welcome to MediaHouse React</p>
+				<p>MediaHouse React</p>
 
 				<BrowserRouter>
 					<Routes>
@@ -50,6 +51,12 @@ function App() {
 									handleLogout={signout}
 									userManager={userManager}
 								/>
+							}
+						/>
+						<Route
+							path="/logout/callback"
+							element={
+								<LogoutCallback />
 							}
 						/>
 					</Routes>
