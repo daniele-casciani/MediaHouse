@@ -8,7 +8,7 @@ const settings = {
     redirect_uri: process.env.REACT_APP_AUTH_REDIRECT_URI! || 'https://localhost:5006/callback',
     post_logout_redirect_uri: process.env.REACT_APP_AUTH_LOGOUT_REDIRECT_URI! || 'https://localhost:5006/',
     response_type: 'code',
-    scope: 'openid profile email phone address offline_access',
+    scope: 'openid profile email offline_access',
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     stateStore: new WebStorageStateStore({ store: window.sessionStorage }),
     automaticSilentRenew: true,
