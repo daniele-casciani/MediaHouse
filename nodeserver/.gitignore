@@ -1,4 +1,4 @@
 .env
+dist/
+README.md
 logs
-dist
-

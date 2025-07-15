@@ -1,71 +1,69 @@
 // src/App.tsx
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import { createZitadelAuth, ZitadelConfig } from "@zitadel/react";
+import userManager from "./auth/oidcClient";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Login from "./components/Login";
+import LogoutCallback from "./components/LogoutCallback";
 import Callback from "./components/Callback";
 
 function App() {
-  const config: ZitadelConfig = {
-    authority: "http://dani.vm.infra.genogra.com:8082/",
-    client_id: "328116644427661315",
-  };
+	function login() {
+		userManager.signinRedirect()
+	}
 
-  const zitadel = createZitadelAuth(config);
+	function signout() {
+		userManager.signoutRedirect();
+	}
 
-  function login() {
-    zitadel.authorize();
-  }
+	const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
-  function signout() {
-    zitadel.signout();
-  }
+	useEffect(() => {
+		userManager.getUser().then((user) => {
+			if (user) {
+				setAuthenticated(true);
+			} else {
+				setAuthenticated(false);
+			}
+		});
+	});
 
-  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+	return (
+		<div className="App">
+			<header className="App-header">
+				<p>MediaHouse React</p>
 
-  useEffect(() => {
-    zitadel.userManager.getUser().then((user) => {
-      if (user) {
-        setAuthenticated(true);
-      } else {
-        setAuthenticated(false);
-      }
-    });
-  }, [zitadel]);
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Welcome to ZITADEL React</p>
-
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Login authenticated={authenticated} handleLogin={login} />
-              }
-            />
-            <Route
-              path="/callback"
-              element={
-                <Callback
-                  authenticated={authenticated}
-                  setAuth={setAuthenticated}
-                  handleLogout={signout}
-                  userManager={zitadel.userManager}
-                />
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </header>
-    </div>
-  );
+				<BrowserRouter>
+					<Routes>
+						<Route
+							path="/"
+							element={
+								<Login authenticated={authenticated} handleLogin={login} />
+							}
+						/>
+						<Route
+							path="/callback"
+							element={
+								<Callback
+									authenticated={authenticated}
+									setAuth={setAuthenticated}
+									handleLogout={signout}
+									userManager={userManager}
+								/>
+							}
+						/>
+						<Route
+							path="/logout/callback"
+							element={
+								<LogoutCallback />
+							}
+						/>
+					</Routes>
+				</BrowserRouter>
+			</header>
+		</div>
+	);
 }
 
 export default App;

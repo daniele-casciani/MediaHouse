@@ -1,0 +1,26 @@
+services:
+  server:
+    build: ./nodeserver
+    env_file:
+      - ./nodeserver/.env
+    ports:
+      - "5005:3000"
+    volumes:
+      - ./nodeserver/src:/app/src
+      - ./nodeserver/scripts:/app/scripts
+      - ./nodeserver/logs/stdout.log:/app/logs/stdout.log
+  
+  client:
+    build: ./reactclient
+    env_file:
+      - ./reactclient/.env
+    ports:
+      - "5006:3000"
+    volumes:
+      - ./reactclient/src:/app/src
+      - ./reactclient/public:/app/public
+      - ./reactclient/logs/stdout.log:/app/logs/stdout.log
+      - ./reactclient/.env:/app/.env
+      
+    depends_on:
+      - server

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Silent Token Renewal</title>
+  </head>
+  <body>
+    <script>
+      // Richiesto da oidc-client-ts per completare il rinnovo silenzioso
+      window.addEventListener("load", () => {
+        new Oidc.UserManager().signinSilentCallback();
+      });
+    </script>
+    <script src="/oidc-client-ts.js"></script>
+  </body>
+</html>

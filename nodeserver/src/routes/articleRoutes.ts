@@ -8,7 +8,7 @@ router.post('/write_article', tokenRequired, authorizeAccess('write_article'), (
   res.json({ message: 'Article written successfully!' });
 });
 
-router.put('/edit_article', tokenRequired, authorizeAccess('edit_article'), (req, res) => {
+router.post('/edit_article', tokenRequired, authorizeAccess('edit_article'), (req, res) => {
   res.json({ message: 'Article edited successfully!' });
 });
 
@@ -21,3 +21,4 @@ router.post('/publish_article', tokenRequired, authorizeAccess('publish_article'
 });
 
 export default router;
+ 
