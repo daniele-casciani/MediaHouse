@@ -1,55 +1,53 @@
 import { Request, Response, NextFunction } from 'express';
-import axios from 'axios';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtHeader } from 'jsonwebtoken';
+import jwksClient from 'jwks-rsa';
 
-// This middleware checks if the request has a valid token in the Authorization header
-export const tokenRequired = async (req: Request, res: Response, next: NextFunction) => {
-	console.log('[tokenRequired] Checking token in request...');
-	const authHeader = req.headers.authorization;
-	
-	if (!authHeader) return res.status(401).json({ message: 'Missing Authorization header' });
-	
-	console.log('[tokenRequired] Authorization header found:');
-	const token = authHeader.split(' ')[1]; // # The token is in the format "Bearer <token>", we want to extract the actual token
+const client = jwksClient({
+	jwksUri: 'http://zitadel:8080/oauth/v2/keys', // DNS interno al container
+	cache: true,
+	rateLimit: true,
+});
 
-	console.log(`[tokenRequired] Token extracted: ${token}`);
-
-	try {
-		// Call the ZITADEL introspection endpoint to validate the token
-		const introspectionRes = await axios.post(
-			process.env.ZITADEL_INTROSPECTION_URL!,
-			new URLSearchParams({ token }),
-			{
-				auth: {
-					username: process.env.API_CLIENT_ID!,
-					password: process.env.API_CLIENT_SECRET!,
-				},
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			}
-		); // TODO capire se funziona questa cosa
-
-		console.log('[tokenRequired] Token introspection response:', introspectionRes.data);
-
-		// Check if the token is active
-		if (!introspectionRes.data.active) {
-			return res.status(403).json({ message: 'Invalid token' });
-		}
-
-		console.log('[tokenRequired] Token is valid, decoding user information...');
-
-		// decede the token to extract user information
-		const decoded = jwt.decode(token, { json: true });
-		if (!decoded) return res.status(403).json({ message: 'Token decoding failed' });
-
-		console.log('[tokenRequired] User information decoded:', decoded);
-
-		(req as any).user = decoded; // Attach to request object
-		
-		console.log('[tokenRequired] User information attached to request object:', (req as any).user);
-		next();
-	} catch (error) {
-		return res.status(500).json({ message: 'Token introspection failed', error });
+const getKey = (header: JwtHeader, callback: (err: Error | null, key?: string) => void) => {
+	if (!header.kid) {
+		return callback(new Error('Missing "kid" in token header'));
 	}
+	client.getSigningKey(header.kid, (err, key) => {
+		if (err) return callback(err);
+		if (!key) return callback(new Error('Signing key not found'));
+		const signingKey = key.getPublicKey();
+		callback(null, signingKey);
+	});
+};
+console.log('[auth.ts] JWT public key client initialized');
+
+export const tokenRequired = (req: Request, res: Response, next: NextFunction) => {
+	const authHeader = req.headers.authorization;
+	console.log('[tokenRequired] Authorization header:', authHeader);
+
+	if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		return res.status(401).json({ message: 'Missing or invalid Authorization header' });
+	}
+
+	const token = authHeader.split(' ')[1];
+	console.log('[tokenRequired] Token estratto:', token);
+
+	jwt.verify(token, getKey, {
+			algorithms: ['RS256'],
+			issuer: 'http://localhost:8082', // 👈 preso da "iss"
+			audience: '329109181506322437', // 👈 uno dei valori in "aud" (es. il tuo client_id)
+		}, (err, decoded) => {
+			if (err) {
+				console.error('[tokenRequired] JWT verification failed:', err);
+				return res.status(403).json({ message: 'Invalid or expired token' });
+			}
+			if (!decoded || typeof decoded !== 'object') {
+				return res.status(403).json({ message: 'Invalid token structure' });
+			}
+
+			console.log('[tokenRequired] Token valido. Issuer:', decoded.iss);
+			console.log('[tokenRequired] Ruoles:', decoded['urn:zitadel:iam:org:project:roles']);
+			(req as any).user = decoded;
+			next();
+		});
 };

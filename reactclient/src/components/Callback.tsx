@@ -1,6 +1,7 @@
 // src/components/Callback.tsx
 import { useEffect, useState } from "react";
 import { UserManager, User } from "oidc-client-ts";
+import Dashboard from "./Dashboard";
 
 type Props = {
     authenticated: boolean | null;
@@ -54,41 +55,14 @@ const Callback = ({
     if (loading) return <div>Loading...</div>;
 
     if (authenticated && userInfo) {
-        return (
-        <div className="user">
-            <h2>Welcome, {userInfo.profile.name}!</h2>
-            <p className="description">Your ZITADEL Profile Information</p>
-            <p>Name: {userInfo.profile.name}</p>
-            <p>Email: {userInfo.profile.email}</p>
-            <p>Email Verified: {userInfo.profile.email_verified ? "Yes" : "No"}</p>
-            <p>
-            Roles:{" "}
-            {JSON.stringify(
-                userInfo.profile["urn:zitadel:iam:org:project:roles"]
-            )}
-            </p>
-            <button onClick={handleLogout}>Log out</button>
-            <button onClick={() => {
-                userManager.signinSilent()
-                    .then(user => {
-                        console.log("Silent renew successful:", user);
-                        setUserInfo(user);
-                    })
-                    .catch(err => {
-                        console.error("Silent renew failed:", err);
-                    });
-                }}>
-                Test Silent Renew
-            </button>
-
-        </div>
-        );
+        return <Dashboard userManager={userManager} user={userInfo} />;
     }
+
     return (
         <div>
             <h2>Authentication Failed</h2>
             <p>Please try logging in again.</p>
-            <button onClick={() => userManager.signinRedirect()}>Login</button>
+            <button onClick={() => userManager.signinRedirect()}>Try Again</button>
         </div>
     );
 };
