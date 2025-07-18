@@ -1,1 +1,10 @@
+# .gitignore for MediaHouse project
+
 nodeserver/logs/*.log
+nodeserver/node_modules/*
+
+reactclient/.env
+reactclient/dist
+reactclient/logs/*.log
+reactclient/logs/
+reactclient/node_modules/*
