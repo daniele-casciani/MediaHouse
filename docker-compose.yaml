@@ -6,9 +6,7 @@ services:
       - 'zitadel'
     image: 'ghcr.io/zitadel/zitadel:latest'
     command: >-
-      start-from-steps
-      --init-projections
-      --init-initial-data
+      start-from-init
       --masterkey "MasterkeyNeedsToHave32Characters"
       --tlsMode external
 
@@ -35,7 +33,7 @@ services:
       # Using an external domain other than localhost proofs, that the proxy configuration works.
       # If ZITADEL can't resolve a requests original host to this domain,
       # it will return a 404 Instance not found error.
-      ZITADEL_EXTERNALDOMAIN: dani.genogra.com
+      ZITADEL_EXTERNALDOMAIN: auth.dani.genogra.com
       ZITADEL_EXTERNALPORT: 443
       ZITADEL_EXTERNALSECURE: true
       ZITADEL_TLS_ENABLED: false
