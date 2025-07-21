@@ -4,9 +4,10 @@ import { UserManager, User } from 'oidc-client-ts';
 type Props = {
     userManager: UserManager;
     user: User;
+    handleLogout: () => void;
 };
 
-const Dashboard = ({ userManager, user }: Props) => {
+const Dashboard = ({ userManager, user, handleLogout }: Props) => {
     const [roles, setRoles] = useState<string[]>([]);
     const [response, setResponse] = useState<string | null>(null);
 
@@ -26,7 +27,7 @@ const Dashboard = ({ userManager, user }: Props) => {
 
     const callApi = async (endpoint: string, method: 'GET' | 'POST') => {
         try {
-            const res = await fetch(`http://localhost:5005/${endpoint}`, {
+            const res = await fetch(`https://server.dani.genogra.com/${endpoint}`, {
                 method,
                 headers: {
                     Authorization: `Bearer ${user.access_token}`,
@@ -53,6 +54,7 @@ const Dashboard = ({ userManager, user }: Props) => {
             <button onClick={() => callApi('edit_article', 'POST')}>Edit Article</button>
             <button onClick={() => callApi('review_articles', 'GET')}>Review Articles</button>
             <button onClick={() => callApi('publish_article', 'POST')}>Publish Article</button>
+            <button onClick={handleLogout}>Logout</button>
         
 
             {response && <p><strong>Server Response:</strong> {response}</p>}

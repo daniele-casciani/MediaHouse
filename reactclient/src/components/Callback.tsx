@@ -55,7 +55,7 @@ const Callback = ({
     if (loading) return <div>Loading...</div>;
 
     if (authenticated && userInfo) {
-        return <Dashboard userManager={userManager} user={userInfo} />;
+        return <Dashboard userManager={userManager} user={userInfo} handleLogout={handleLogout} />;
     }
 
     return (
