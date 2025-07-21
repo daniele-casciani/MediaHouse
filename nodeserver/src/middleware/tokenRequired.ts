@@ -3,7 +3,7 @@ import jwt, { JwtHeader } from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
 const client = jwksClient({
-	jwksUri: 'http://zitadel:8080/oauth/v2/keys', // DNS interno al container
+	jwksUri: 'https://auth.dani.genogra.com/oauth/v2/keys',
 	cache: true,
 	rateLimit: true,
 });
@@ -34,8 +34,7 @@ export const tokenRequired = (req: Request, res: Response, next: NextFunction) =
 
 	jwt.verify(token, getKey, {
 			algorithms: ['RS256'],
-			issuer: 'http://localhost:8082', // 👈 preso da "iss"
-			audience: '329109181506322437', // 👈 uno dei valori in "aud" (es. il tuo client_id)
+			issuer: 'https://auth.dani.genogra.com', // 👈 preso da "iss"
 		}, (err, decoded) => {
 			if (err) {
 				console.error('[tokenRequired] JWT verification failed:', err);
