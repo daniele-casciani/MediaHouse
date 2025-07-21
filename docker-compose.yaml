@@ -75,7 +75,9 @@ services:
       - ./nodeserver/logs/stdout.log:/app/logs/stdout.log
     networks:
       - zitadel
-
+    extra_hosts:
+      - "auth.dani.genogra.com:10.1.0.2"
+      - "server.dani.genogra.com:10.1.0.2"
   
   client:
     build: ./reactclient
@@ -93,6 +95,9 @@ services:
       - server
     networks:
       - zitadel
+    extra_hosts:
+      - "auth.dani.genogra.com:10.1.0.2"
+      - "server.dani.genogra.com:10.1.0.2"
 
 volumes:
   zitadel-db-data:
