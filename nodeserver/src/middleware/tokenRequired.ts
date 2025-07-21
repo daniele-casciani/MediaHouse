@@ -19,7 +19,6 @@ const getKey = (header: JwtHeader, callback: (err: Error | null, key?: string) =
 		callback(null, signingKey);
 	});
 };
-console.log('[auth.ts] JWT public key client initialized');
 
 export const tokenRequired = (req: Request, res: Response, next: NextFunction) => {
 	const authHeader = req.headers.authorization;

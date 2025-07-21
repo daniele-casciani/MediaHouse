@@ -1,5 +1,5 @@
 import express from 'express';
-import { tokenRequired } from '../middleware/auth';
+import { tokenRequired } from '../middleware/tokenRequired';
 import { authorizeAccess } from '../middleware/accessControl';
 
 const router = express.Router();
