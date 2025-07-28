@@ -1,5 +1,4 @@
 services:
-  
   zitadel:
     restart: 'always'
     networks:
@@ -45,7 +44,6 @@ services:
     volumes:
       - zitadel-data:/zitadel-data
     
-
   db:
     restart: 'always'
     image: postgres:17-alpine
