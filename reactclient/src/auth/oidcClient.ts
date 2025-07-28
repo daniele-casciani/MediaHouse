@@ -6,14 +6,14 @@ const settings = {
     authority: process.env.REACT_APP_AUTH_ISSUER! || 'https://localhost:5006',
     client_id: process.env.REACT_APP_AUTH_CLIENT_ID! || '328404667920875523',
     redirect_uri: process.env.REACT_APP_AUTH_REDIRECT_URI! || 'https://localhost:5006/callback',
-    post_logout_redirect_uri: process.env.REACT_APP_AUTH_LOGOUT_REDIRECT_URI! || 'https://localhost:5006/',
+    post_logout_redirect_uri: process.env.REACT_APP_AUTH_LOGOUT_REDIRECT_URI! || 'https://localhost:5006/logout/callback',
     response_type: 'code',
     scope: 'openid profile email offline_access',
-    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    userStore: new WebStorageStateStore({ store: window.localStorage}),
     stateStore: new WebStorageStateStore({ store: window.sessionStorage }),
     automaticSilentRenew: true,
     silent_redirect_uri: process.env.REACT_APP_AUTH_SILENT_REDIRECT_URI || "http://localhost:5006/silent-renew.html",
-    filterProtocolClaims: true,
+    filterProtocolClaims: false, 
 };
 
 const userManager = new UserManager(settings);

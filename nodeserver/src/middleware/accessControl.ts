@@ -29,13 +29,16 @@ const accessRequirements: Record<string, { role: string; experience_level: strin
 // Middleware to authorize access based on user role and experience level
 export const authorizeAccess = (endpoint: string) => {
 	console.log(`[authorizeAccess] Authorizing access for endpoint: ${endpoint}`);
+
 	return (req: Request, res: Response, next: NextFunction) => {
 		// We assume that the token has already been decoded in auth.ts
 		const token = (req as any).user;
 		console.log(`[authorizeAccess] Token found:`, token);
+
 		// init the role and experience level variables
 		let role: string | undefined;
 		let experienceLevel: string | undefined;
+		console.log(`[authorizeAccess] Checking token claims for role and experience level...`);
 
 		// Check if the token contains the required claims
 		for (const [claim, value] of Object.entries(token)) {

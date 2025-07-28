@@ -1,4 +1,66 @@
 services:
+  zitadel:
+    restart: 'always'
+    networks:
+      - 'zitadel'
+    image: 'ghcr.io/zitadel/zitadel:latest'
+    command: >-
+      start-from-init
+      --masterkey "MasterkeyNeedsToHave32Characters"
+      --tlsMode external
+
+    environment:
+      # database configuration
+      ZITADEL_DATABASE_POSTGRES_HOST: db
+      ZITADEL_DATABASE_POSTGRES_PORT: 5432
+      ZITADEL_DATABASE_POSTGRES_DATABASE: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: zitadel
+      ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: disable
+      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: postgres
+      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: postgres
+      ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE: disable
+
+      # For convenience, ZITADEL should not ask to change the initial admin users password.
+      ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORDCHANGEREQUIRED: false
+    
+      # In case something doesn't work as expected,
+      # it can be handy to be able to read the access logs.
+      ZITADEL_LOGSTORE_ACCESS_STDOUT_ENABLED: true
+
+      # External configuration
+      # Using an external domain other than localhost proofs, that the proxy configuration works.
+      # If ZITADEL can't resolve a requests original host to this domain,
+      # it will return a 404 Instance not found error.
+      ZITADEL_EXTERNALDOMAIN: auth.dani.genogra.com
+      ZITADEL_EXTERNALPORT: 443
+      ZITADEL_EXTERNALSECURE: true
+      ZITADEL_TLS_ENABLED: false
+    depends_on:
+      db:
+        condition: 'service_healthy'
+    ports:
+      - '8082:8080'
+    volumes:
+      - zitadel-data:/zitadel-data
+    
+  db:
+    restart: 'always'
+    image: postgres:17-alpine
+    environment:
+      PGUSER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - 'zitadel'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "zitadel", "-U", "postgres"]
+      interval: '10s'
+      timeout: '30s'
+      retries: 5
+      start_period: '20s'
+    volumes:
+      - zitadel-db-data:/var/lib/postgresql/data
+
   server:
     build: ./nodeserver
     env_file:
@@ -9,6 +71,11 @@ services:
       - ./nodeserver/src:/app/src
       - ./nodeserver/scripts:/app/scripts
       - ./nodeserver/logs/stdout.log:/app/logs/stdout.log
+    networks:
+      - zitadel
+    extra_hosts:
+      - "auth.dani.genogra.com:10.1.0.2"
+      - "server.dani.genogra.com:10.1.0.2"
   
   client:
     build: ./reactclient
@@ -24,3 +91,16 @@ services:
       
     depends_on:
       - server
+    networks:
+      - zitadel
+    extra_hosts:
+      - "auth.dani.genogra.com:10.1.0.2"
+      - "server.dani.genogra.com:10.1.0.2"
+
+volumes:
+  zitadel-db-data:
+  zitadel-data:
+  
+networks:
+  zitadel:
+  
